@@ -1,0 +1,37 @@
+?- intersect([1,2,3,4],[5,4,1,6]).
+true .
+
+?- intersect([1,2,3,4],[5,6]).
+false.
+
+?- all_intersect([[1,2,3],[5,4,6]],[3,4]).
+true .
+
+?- all_intersect([],[3,4]).
+true .
+
+?- all_intersect([[1,2,3],[1,2,5],[5,4,6]],[3,4]).
+false.
+
+?- member_nl(h,[a,[b,e,f],[e,[g,c,d],b]]).
+false.
+
+?- member_nl(c,[a,[b,e,f],[e,[g,c,d],b]]).
+true .
+
+?- member_nl(h,[a,[b,e,f],[e,[g,c,d],b]]).
+false.
+
+?- member_nl(X,[a,[b,e,f],[e,[g,c,d],b]]).
+X = a ;
+X = b ;
+X = e ;
+X = f ;
+X = e ;
+X = g ;
+X = c ;
+X = d ;
+X = b ;
+false.
+
+

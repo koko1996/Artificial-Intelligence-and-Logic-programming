@@ -1,0 +1,39 @@
+?- above(b4,b6).
+true .
+
+?- above(b5,b6).
+true .
+
+?- above(b3,b1).
+false.
+
+?- left(b2,b6).
+true .
+
+?- left(b2,b7).
+true .
+
+?- left(b1,b7).
+true .
+
+?- left(b2,b3).
+true .
+
+?- left(b3,b4).
+false.
+
+?- right(b6,b2).
+true .
+
+?- right(b7,b2).
+true .
+
+?- right(b7,b1).
+true .
+
+?- right(b3,b2).
+true .
+
+?- right(b4,b3).
+false.
+

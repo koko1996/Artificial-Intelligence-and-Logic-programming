@@ -1,0 +1,197 @@
+[debug]  ?- run(test1,R).
+R = [a1>a2>a3, a1, [a2>a3, a2, [a3, a3, [...]]]] .
+
+[debug]  ?- run(test2,R).
+R = [(a1>a2| a3), a1, [(a2| a3), a2, [(0| a3), a3, [...]]]] .
+
+[debug]  ?- run(test3,R).
+R = [(a1$a1), a1, [(0$0)]] .
+
+[debug]  ?- run(test4,R).
+false.
+
+[debug]  ?- run(test5,R).
+R = [(user1$user1), acquireLock1, [(acquireLock2>doSomething>releaseLock2>releaseLock1$acquireLock2>doSomething>releaseLock2>releaseLock1), acquireLock2, [(doSomething> ... > ... $ doSomething> ... > ...), doSomething, [...|...]]]] .
+
+[debug]  ?- run(test6,R).
+R = [0?a1>a2>test6] .
+
+[debug]  ?- run(test22,R).
+R = [(a3| a1>a2), a3, [(0| a1>a2), a1, [(0| a2), a2, [...]]]] .
+
+[debug]  ?- run(deadlockingSystem,R).
+R = [(user1| user2$lock1s0| lock2s0| iterDoSomething), acquireLock1, [(acquireLock2>doSomething>releaseLock2>releaseLock1| user2$lock1s1| lock2s0| iterDoSomething), acquireLock2, [(... > ...| user2$lock1s1| ...| ...), doSomething, [...|...]]]] .
+
+[debug]  ?- run(oneUserSystem,R).
+R = [(user1$lock1s0| lock2s0| iterDoSomething), acquireLock1, [(acquireLock2>doSomething>releaseLock2>releaseLock1$lock1s1| lock2s0| iterDoSomething), acquireLock2, [(doSomething> ... > ... $ lock1s1| ...| ...), doSomething, [...|...]]]] .
+
+--------------------------------------------------------------------------------------------
+
+[debug]  ?- print_run(test1).
+a1>a2>a3
+a1
+a2>a3
+a2
+a3
+a3
+0
+true .
+
+[debug]  ?- print_run(test2).
+a1>a2|a3
+a1
+a2|a3
+a2
+0|a3
+a3
+0|0
+true .
+
+[debug]  ?- print_run(test22).
+a3|a1>a2
+a3
+0|a1>a2
+a1
+0|a2
+a2
+0|0
+true .
+
+[debug]  ?- print_run(oneUserSystem).user1$lock1s0|lock2s0|iterDoSomething
+acquireLock1
+acquireLock2>doSomething>releaseLock2>releaseLock1$lock1s1|lock2s0|iterDoSomething
+acquireLock2
+doSomething>releaseLock2>releaseLock1$lock1s1|lock2s1|iterDoSomething
+doSomething
+releaseLock2>releaseLock1$lock1s1|lock2s1|iterDoSomething
+releaseLock2
+releaseLock1$lock1s1|lock2s0|iterDoSomething
+releaseLock1
+0$lock1s0|lock2s0|iterDoSomething
+true .
+
+[debug]  ?- print_run(deadlockingSystem).
+user1|user2$lock1s0|lock2s0|iterDoSomething
+acquireLock1
+acquireLock2>doSomething>releaseLock2>releaseLock1|user2$lock1s1|lock2s0|iterDoSomething
+acquireLock2
+doSomething>releaseLock2>releaseLock1|user2$lock1s1|lock2s1|iterDoSomething
+doSomething
+releaseLock2>releaseLock1|user2$lock1s1|lock2s1|iterDoSomething
+releaseLock2
+releaseLock1|user2$lock1s1|lock2s0|iterDoSomething
+releaseLock1
+0|user2$lock1s0|lock2s0|iterDoSomething
+acquireLock2
+0|acquireLock1>doSomething>releaseLock1>releaseLock2$lock1s0|lock2s1|iterDoSomething
+acquireLock1
+0|doSomething>releaseLock1>releaseLock2$lock1s1|lock2s1|iterDoSomething
+doSomething
+0|releaseLock1>releaseLock2$lock1s1|lock2s1|iterDoSomething
+releaseLock1
+0|releaseLock2$lock1s0|lock2s1|iterDoSomething
+releaseLock2
+0|0$lock1s0|lock2s0|iterDoSomething
+true ;
+;
+user1|user2$lock1s0|lock2s0|iterDoSomething
+acquireLock2
+user1|acquireLock1>doSomething>releaseLock1>releaseLock2$lock1s0|lock2s1|iterDoSomething
+acquireLock1
+user1|doSomething>releaseLock1>releaseLock2$lock1s1|lock2s1|iterDoSomething
+doSomething
+user1|releaseLock1>releaseLock2$lock1s1|lock2s1|iterDoSomething
+releaseLock1
+user1|releaseLock2$lock1s0|lock2s1|iterDoSomething
+acquireLock1
+acquireLock2>doSomething>releaseLock2>releaseLock1|releaseLock2$lock1s1|lock2s1|iterDoSomething
+releaseLock2
+acquireLock2>doSomething>releaseLock2>releaseLock1|0$lock1s1|lock2s0|iterDoSomething
+acquireLock2
+doSomething>releaseLock2>releaseLock1|0$lock1s1|lock2s1|iterDoSomething
+doSomething
+releaseLock2>releaseLock1|0$lock1s1|lock2s1|iterDoSomething
+releaseLock2
+releaseLock1|0$lock1s1|lock2s0|iterDoSomething
+releaseLock1
+0|0$lock1s0|lock2s0|iterDoSomething
+true 
+
+--------------------------------------------------------------------------------------------
+
+[debug]  ?- has_infinite_run(deadlockingSystem).
+false.
+
+[debug]  ?- has_infinite_run(oneUserSystem).
+false.
+
+[debug]  ?- has_infinite_run(producerConsumerSyst).
+true.
+
+[debug]  ?- has_infinite_run(producerConsumerSystBuggy).
+true.
+
+[debug]  ?- has_infinite_run(test6).
+true.
+
+[debug]  ?- has_infinite_run(test1).
+false.
+
+[debug]  ?- has_infinite_run(test7).
+true .
+--------------------------------------------------------------------------------------------
+
+[debug]  ?- deadlock_free(test1).
+true.
+
+[debug]  ?- deadlock_free(test6).
+true.
+
+[debug]  ?- deadlock_free(deadlockingSystem).
+false.
+
+[debug]  ?- deadlock_free(oneUserSystem).
+true.
+
+[debug]  ?- deadlock_free(producerConsumerSyst).
+true.
+
+[debug]  ?- deadlock_free(producerConsumerSystBuggy).
+true.
+
+--------------------------------------------------------------------------------------------
+
+[debug]  ?- cannot_occur(test1,a1).
+false.
+
+[debug]  ?- cannot_occur(test1,a4).
+true.
+
+[debug]  ?- cannot_occur(producerConsumerSyst,overflow).
+true.
+
+[debug]  ?- cannot_occur(producerConsumerSyst,underflow).
+true.
+
+[debug]  ?- cannot_occur(producerConsumerSystBuggy,overflow).
+false.
+
+[debug]  ?- cannot_occur(producerConsumerSystBuggy,underflow).
+false.
+
+--------------------------------------------------------------------------------------------
+
+[debug]  ?- whenever_eventually(producerConsumerSyst,produce,consume).
+false.
+
+[debug]  ?- whenever_eventually(producerConsumerSystBuggy,produce,consume).
+false.
+
+[debug]  ?- whenever_eventually(test1,a1,a2).
+true.
+
+[debug]  ?- whenever_eventually(test6,a1,a2).
+true.
+
+[debug]  ?- whenever_eventually(test7,a1,a2).
+true.

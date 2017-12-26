@@ -1,0 +1,92 @@
+?- satisfies([p, q], (-p v q) & p).
+true .
+
+?- satisfies([p], (-p v q) & p).
+false.
+
+?- satisfies([p], (-p v q) ).
+false.
+
+?- satisfies([p], (p v q) ).
+true .
+
+?- satisfies([p], (q => p) ).
+true .
+
+?- satisfies([p], (q => q) ).
+true .
+
+?- satisfies([p], (q <=> q) ).
+true .
+
+?- satisfies([p], (q <=> p) ).
+false.
+
+
+--------------------------------------------------------------------------------------------
+
+
+
+?- elimImpl((-p => q) & (r <=> -s),R).
+R =  ((- -p v q)&(-r v -s)&(- -s v r)).
+
+?- elimImpl((r <=> -s),R).
+R =  ((-r v -s)&(- -s v r)).
+
+?- elimImpl((r => -s),R).
+R =  (-r v -s).
+
+?- elimImpl(-(r => -s),R).
+R = - (-r v -s) .
+
+?- elimImpl((-p => q) v (r <=> -s),R).
+R =  ((- -p v q)v(-r v -s)&(- -s v r)).
+
+?- elimImpl(-(r <=> -s),R).
+R = - ((-r v -s)&(- -s v r)) .
+
+
+--------------------------------------------------------------------------------------------
+
+
+[debug]  ?- nnf(-(p & -q),R).
+R =  (-p v q) .
+
+[debug]  ?- nnf(-(p & -(q v -r)),R).
+R =  (-p v q v -r) .
+
+[debug]  ?- nnf(-(-(q v -r)),R).
+R =  (q v -r) .
+
+[debug]  ?- nnf(-(q v -r),R).
+R =  (-q&r) .
+
+[debug]  ?- nnf(-(q & -r),R).
+R =  (-q v r) .
+
+[debug]  ?- nnf(-(q & -r),R).
+R =  (-q v r) .
+
+[debug]  ?- nnf(-(q & r),R).
+R =  (-q v -r) .
+
+
+--------------------------------------------------------------------------------------------
+
+?- cnf((p & -q) v r,R).
+R =  ((p v r)&(-q v r)) .
+
+?- cnf((p & -q) v (r & -s),R).
+R =  ((p v r)&(p v -s)&(-q v r)&(-q v -s)) .
+
+?- cnf(p & (q v (r & s)),R).
+R =  (p&(q v r)&(q v s)) .
+
+?- cnf(p & (q & (r & s)),R).
+R =  (p&q&r&s) .
+
+?- cnf(p v (q & (r & s)),R).
+R =  ((p v q)&(p v r&s)) .
+
+
+
